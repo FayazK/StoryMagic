@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   UserIcon,
   KeyIcon,
@@ -13,8 +13,8 @@ import DatabaseStatus from '../components/database/DatabaseStatus'
 const SettingsPage = () => {
   const [activeTab, setActiveTab] = useState('api')
   const [formData, setFormData] = useState({
-    googleGeminiKey: '****************',
-    replicateKey: '****************',
+    googleGeminiKey: '',
+    replicateKey: '',
     theme: 'system',
     language: 'english',
     contentFilter: 'moderate',
@@ -23,19 +23,109 @@ const SettingsPage = () => {
     cpuUsage: 'balanced',
     cacheSize: 'standard'
   })
+  
+  // State to track if API keys were previously set
+  const [keysSet, setKeysSet] = useState({
+    googleGeminiKey: false,
+    replicateKey: false
+  })
+  
+  const [loading, setLoading] = useState(true)
+  const [saveStatus, setSaveStatus] = useState(null)
+  
+  // Load settings when the component mounts
+  useEffect(() => {
+    const loadSettings = async () => {
+      try {
+        setLoading(true)
+        const settings = await window.api.settings.getAll()
+        
+        // Check if API keys are set and mark them as set
+        const newKeysSet = { ...keysSet }
+        if (settings.googleGeminiKey) {
+          newKeysSet.googleGeminiKey = true
+          // Replace actual key with placeholder for display
+          settings.googleGeminiKey = '•'.repeat(16)
+        }
+        
+        if (settings.replicateKey) {
+          newKeysSet.replicateKey = true
+          // Replace actual key with placeholder for display
+          settings.replicateKey = '•'.repeat(16)
+        }
+        
+        setKeysSet(newKeysSet)
+        
+        // Update form data with database settings, keeping defaults for any missing values
+        setFormData(prevData => ({
+          ...prevData,
+          ...settings
+        }))
+      } catch (error) {
+        console.error('Failed to load settings:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    
+    loadSettings()
+  }, [])
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target
+    
+    // Handle API keys specially
+    if (name === 'googleGeminiKey' || name === 'replicateKey') {
+      // If the value contains only bullets, don't update (user hasn't changed it)
+      if (value === '•'.repeat(value.length)) {
+        return
+      }
+      
+      // If it's a non-empty value, mark the key as set
+      if (value.trim() !== '') {
+        setKeysSet(prev => ({ ...prev, [name]: true }))
+      } else {
+        setKeysSet(prev => ({ ...prev, [name]: false }))
+      }
+    }
+    
     setFormData({
       ...formData,
       [name]: type === 'checkbox' ? checked : value
     })
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log('Settings updated:', formData)
-    // In a real implementation, we would save these settings
+    try {
+      setSaveStatus({ type: 'loading', message: 'Saving settings...' })
+      
+      // Create a copy of formData to modify before saving
+      const dataToSave = { ...formData }
+      
+      // For API keys, only save if they were changed (not the placeholder)
+      if (dataToSave.googleGeminiKey === '•'.repeat(dataToSave.googleGeminiKey.length)) {
+        delete dataToSave.googleGeminiKey
+      }
+      
+      if (dataToSave.replicateKey === '•'.repeat(dataToSave.replicateKey.length)) {
+        delete dataToSave.replicateKey
+      }
+      
+      // Save all settings at once
+      const success = await window.api.settings.saveAll(dataToSave)
+      
+      if (success) {
+        setSaveStatus({ type: 'success', message: 'Settings saved successfully!' })
+        // Clear success message after 3 seconds
+        setTimeout(() => setSaveStatus(null), 3000)
+      } else {
+        setSaveStatus({ type: 'error', message: 'Failed to save settings' })
+      }
+    } catch (error) {
+      console.error('Error saving settings:', error)
+      setSaveStatus({ type: 'error', message: 'An error occurred while saving settings' })
+    }
   }
 
   const tabs = [
@@ -48,6 +138,18 @@ const SettingsPage = () => {
     { id: 'language', name: 'Language Settings', icon: LanguageIcon }
   ]
 
+  // Render a loading state if settings are being loaded
+  if (loading) {
+    return (
+      <div className="animate-fade-in p-8 flex items-center justify-center h-full">
+        <div className="flex flex-col items-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+          <p className="mt-4 text-gray-600 dark:text-gray-300">Loading settings...</p>
+        </div>
+      </div>
+    )
+  }
+  
   return (
     <div className="animate-fade-in">
       <div className="mb-8">
@@ -150,12 +252,28 @@ const SettingsPage = () => {
                     </div>
 
                     <div className="pt-4">
-                      <button
-                        type="submit"
-                        className="btn btn-primary px-4 py-2 text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-                      >
-                        Save API Keys
-                      </button>
+                      <div className="flex items-center">
+                        <button
+                          type="submit"
+                          className="btn btn-primary px-4 py-2 text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                          disabled={saveStatus?.type === 'loading'}
+                        >
+                          {saveStatus?.type === 'loading' ? (
+                            <>
+                              <span className="animate-spin inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"></span>
+                              Saving...
+                            </>
+                          ) : 'Save API Keys'}
+                        </button>
+                        
+                        {saveStatus && saveStatus.type !== 'loading' && (
+                          <span 
+                            className={`ml-4 text-sm ${saveStatus.type === 'success' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}
+                          >
+                            {saveStatus.message}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -214,12 +332,28 @@ const SettingsPage = () => {
                     </div>
 
                     <div className="pt-4">
-                      <button
-                        type="submit"
-                        className="btn btn-primary px-4 py-2 text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-                      >
-                        Save Preferences
-                      </button>
+                      <div className="flex items-center">
+                        <button
+                          type="submit"
+                          className="btn btn-primary px-4 py-2 text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                          disabled={saveStatus?.type === 'loading'}
+                        >
+                          {saveStatus?.type === 'loading' ? (
+                            <>
+                              <span className="animate-spin inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"></span>
+                              Saving...
+                            </>
+                          ) : 'Save Preferences'}
+                        </button>
+                        
+                        {saveStatus && saveStatus.type !== 'loading' && (
+                          <span 
+                            className={`ml-4 text-sm ${saveStatus.type === 'success' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}
+                          >
+                            {saveStatus.message}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -320,9 +454,23 @@ const SettingsPage = () => {
                       <button
                         type="submit"
                         className="btn btn-primary px-4 py-2 text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                        disabled={saveStatus?.type === 'loading'}
                       >
-                        Save Storage Settings
+                        {saveStatus?.type === 'loading' ? (
+                          <>
+                            <span className="animate-spin inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"></span>
+                            Saving...
+                          </>
+                        ) : 'Save Storage Settings'}
                       </button>
+                      
+                      {saveStatus && saveStatus.type !== 'loading' && (
+                        <span 
+                          className={`ml-4 text-sm ${saveStatus.type === 'success' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}
+                        >
+                          {saveStatus.message}
+                        </span>
+                      )}
                       <button
                         type="button"
                         className="btn btn-outline px-4 py-2 text-sm font-medium rounded-md text-red-600 dark:text-red-400 border border-red-300 dark:border-red-700 hover:bg-red-50 dark:hover:bg-red-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"

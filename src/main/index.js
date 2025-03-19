@@ -8,6 +8,13 @@ import {
   closeDatabase,
   insertDefaultTemplates
 } from './utils/database'
+import {
+  getSetting,
+  saveSetting,
+  getAllSettings,
+  saveSettings,
+  initializeDefaultSettings
+} from './utils/settings'
 
 function createWindow() {
   // Create the browser window.
@@ -48,6 +55,11 @@ function setupDatabase() {
   // Initialize the database
   const initialized = initializeDatabase()
 
+  // Initialize default settings
+  if (initialized) {
+    initializeDefaultSettings()
+  }
+
   // Setup IPC handlers
   setupDatabaseIPC()
 
@@ -60,6 +72,23 @@ function setupDatabase() {
 function setupDatabaseIPC() {
   ipcMain.handle('db:isInitialized', () => {
     return isInitialized()
+  })
+
+  // Settings handlers
+  ipcMain.handle('settings:get', (_, key, defaultValue) => {
+    return getSetting(key, defaultValue)
+  })
+
+  ipcMain.handle('settings:set', (_, key, value) => {
+    return saveSetting(key, value)
+  })
+
+  ipcMain.handle('settings:getAll', () => {
+    return getAllSettings()
+  })
+
+  ipcMain.handle('settings:saveAll', (_, settings) => {
+    return saveSettings(settings)
   })
 }
 

@@ -7,6 +7,21 @@ const api = {
   database: {
     // Check if the database is initialized
     isInitialized: () => ipcRenderer.invoke('db:isInitialized')
+  },
+  
+  // Settings APIs
+  settings: {
+    // Get a setting value
+    get: (key, defaultValue) => ipcRenderer.invoke('settings:get', key, defaultValue),
+    
+    // Save a setting value
+    set: (key, value) => ipcRenderer.invoke('settings:set', key, value),
+    
+    // Get all settings
+    getAll: () => ipcRenderer.invoke('settings:getAll'),
+    
+    // Save multiple settings at once
+    saveAll: (settings) => ipcRenderer.invoke('settings:saveAll', settings)
   }
 }
 
