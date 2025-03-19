@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useTheme } from '../hooks/useTheme'
 import {
   UserIcon,
   KeyIcon,
@@ -12,10 +13,11 @@ import DatabaseStatus from '../components/database/DatabaseStatus'
 
 const SettingsPage = () => {
   const [activeTab, setActiveTab] = useState('api')
+  const { darkMode, toggleDarkMode } = useTheme()
   const [formData, setFormData] = useState({
     googleGeminiKey: '',
     replicateKey: '',
-    theme: 'system',
+    theme: darkMode ? 'dark' : localStorage.getItem('theme') || 'system',
     language: 'english',
     contentFilter: 'moderate',
     autoSave: true,
@@ -255,7 +257,7 @@ const SettingsPage = () => {
                       <div className="flex items-center">
                         <button
                           type="submit"
-                          className="btn btn-primary px-4 py-2 text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                          className="btn btn-base btn-primary"
                           disabled={saveStatus?.type === 'loading'}
                         >
                           {saveStatus?.type === 'loading' ? (
@@ -301,7 +303,18 @@ const SettingsPage = () => {
                         name="theme"
                         className="input w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                         value={formData.theme}
-                        onChange={handleInputChange}
+                        onChange={(e) => {
+                          handleInputChange(e);
+                          const newTheme = e.target.value;
+                          if (newTheme === 'dark') {
+                            if (!darkMode) toggleDarkMode();
+                          } else if (newTheme === 'light') {
+                            if (darkMode) toggleDarkMode();
+                          } else if (newTheme === 'system') {
+                            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                            if (prefersDark !== darkMode) toggleDarkMode();
+                          }
+                        }}
                       >
                         <option value="light">Light Mode</option>
                         <option value="dark">Dark Mode</option>
@@ -335,7 +348,7 @@ const SettingsPage = () => {
                       <div className="flex items-center">
                         <button
                           type="submit"
-                          className="btn btn-primary px-4 py-2 text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                          className="btn btn-base btn-primary"
                           disabled={saveStatus?.type === 'loading'}
                         >
                           {saveStatus?.type === 'loading' ? (
@@ -473,7 +486,7 @@ const SettingsPage = () => {
                       )}
                       <button
                         type="button"
-                        className="btn btn-outline px-4 py-2 text-sm font-medium rounded-md text-red-600 dark:text-red-400 border border-red-300 dark:border-red-700 hover:bg-red-50 dark:hover:bg-red-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                        className="btn btn-base btn-outline text-red-600 dark:text-red-400 border-red-300 dark:border-red-700"
                       >
                         Clear Cache
                       </button>
@@ -571,7 +584,7 @@ const SettingsPage = () => {
                     <div className="pt-4">
                       <button
                         type="button"
-                        className="btn btn-outline px-4 py-2 text-sm font-medium rounded-md text-red-600 dark:text-red-400 border border-red-300 dark:border-red-700 hover:bg-red-50 dark:hover:bg-red-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                        className="btn btn-base btn-outline text-red-600 dark:text-red-400 border-red-300 dark:border-red-700"
                       >
                         Reset Database
                       </button>

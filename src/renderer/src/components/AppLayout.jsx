@@ -1,5 +1,5 @@
-import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import { useTheme } from '../hooks/useTheme'
 import {
   HomeIcon,
   BookOpenIcon,
@@ -12,12 +12,7 @@ import {
 
 const AppLayout = ({ children }) => {
   const location = useLocation()
-  const [darkMode, setDarkMode] = useState(false)
-
-  const toggleDarkMode = () => {
-    setDarkMode(!darkMode)
-    document.documentElement.classList.toggle('dark')
-  }
+  const { darkMode, toggleDarkMode } = useTheme()
 
   const navItems = [
     { path: '/', label: 'Home', icon: HomeIcon },
@@ -28,7 +23,7 @@ const AppLayout = ({ children }) => {
   ]
 
   return (
-    <div className={`min-h-screen flex ${darkMode ? 'dark' : ''}`}>
+    <div className="min-h-screen flex">
       {/* Sidebar */}
       <aside className="w-20 md:w-64 bg-white dark:bg-gray-800 shadow-md flex flex-col">
         <div className="p-4 flex items-center justify-center md:justify-start">

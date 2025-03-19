@@ -118,7 +118,7 @@ const StoryLibrary = () => {
     <div className="animate-fade-in">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Your Story Library</h1>
-        <Link to="/create" className="btn btn-primary">
+        <Link to="/create" className="btn btn-base btn-primary">
           Create New Story
         </Link>
       </div>
@@ -140,7 +140,7 @@ const StoryLibrary = () => {
 
         <div className="flex gap-2">
           <button
-            className="btn btn-outline flex items-center"
+            className="btn btn-base btn-outline flex items-center"
             onClick={() => setFilterOpen(!filterOpen)}
           >
             <FunnelIcon className="w-5 h-5 mr-2" />
@@ -283,7 +283,7 @@ const StoryLibrary = () => {
               : 'Get started by creating your first story'}
           </p>
           {!(searchTerm || selectedTags.length > 0 || showFavoritesOnly) && (
-            <Link to="/create" className="btn btn-primary mt-4 inline-block">
+            <Link to="/create" className="btn btn-base btn-primary mt-4 inline-block">
               Create New Story
             </Link>
           )}

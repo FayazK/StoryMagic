@@ -404,7 +404,7 @@ const StoryCreator = () => {
       <div className="flex justify-between mt-6">
         <button
           onClick={prevStep}
-          className={`btn btn-outline flex items-center ${step === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
+          className={`btn btn-base btn-outline flex items-center ${step === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
           disabled={step === 1}
         >
           <ArrowLeftIcon className="w-5 h-5 mr-2" />
@@ -413,7 +413,7 @@ const StoryCreator = () => {
 
         <button
           onClick={step === totalSteps ? () => console.log('Generate story') : nextStep}
-          className="btn btn-primary flex items-center"
+          className="btn btn-base btn-primary flex items-center"
         >
           {step === totalSteps ? 'Generate Story' : 'Next'}
           {step !== totalSteps && <ArrowRightIcon className="w-5 h-5 ml-2" />}
