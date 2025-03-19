@@ -5,8 +5,10 @@ import {
   ComputerDesktopIcon,
   ShieldCheckIcon,
   CpuChipIcon,
-  LanguageIcon
+  LanguageIcon,
+  ServerIcon
 } from '@heroicons/react/24/outline'
+import DatabaseStatus from '../components/database/DatabaseStatus'
 
 const SettingsPage = () => {
   const [activeTab, setActiveTab] = useState('api')
@@ -40,6 +42,7 @@ const SettingsPage = () => {
     { id: 'api', name: 'API Configuration', icon: KeyIcon },
     { id: 'appearance', name: 'Preferences', icon: UserIcon },
     { id: 'storage', name: 'Storage Management', icon: ComputerDesktopIcon },
+    { id: 'database', name: 'Database', icon: ServerIcon },
     { id: 'privacy', name: 'Privacy Controls', icon: ShieldCheckIcon },
     { id: 'resources', name: 'Resource Allocation', icon: CpuChipIcon },
     { id: 'language', name: 'Language Settings', icon: LanguageIcon }
@@ -111,7 +114,7 @@ const SettingsPage = () => {
                         type="password"
                         id="googleGeminiKey"
                         name="googleGeminiKey"
-                        className="input"
+                        className="input w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                         value={formData.googleGeminiKey}
                         onChange={handleInputChange}
                       />
@@ -134,7 +137,7 @@ const SettingsPage = () => {
                         type="password"
                         id="replicateKey"
                         name="replicateKey"
-                        className="input"
+                        className="input w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                         value={formData.replicateKey}
                         onChange={handleInputChange}
                       />
@@ -147,7 +150,10 @@ const SettingsPage = () => {
                     </div>
 
                     <div className="pt-4">
-                      <button type="submit" className="btn btn-primary">
+                      <button
+                        type="submit"
+                        className="btn btn-primary px-4 py-2 text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                      >
                         Save API Keys
                       </button>
                     </div>
@@ -175,7 +181,7 @@ const SettingsPage = () => {
                       <select
                         id="theme"
                         name="theme"
-                        className="input"
+                        className="input w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                         value={formData.theme}
                         onChange={handleInputChange}
                       >
@@ -195,7 +201,7 @@ const SettingsPage = () => {
                       <select
                         id="language"
                         name="language"
-                        className="input"
+                        className="input w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                         value={formData.language}
                         onChange={handleInputChange}
                       >
@@ -208,7 +214,10 @@ const SettingsPage = () => {
                     </div>
 
                     <div className="pt-4">
-                      <button type="submit" className="btn btn-primary">
+                      <button
+                        type="submit"
+                        className="btn btn-primary px-4 py-2 text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                      >
                         Save Preferences
                       </button>
                     </div>
@@ -274,7 +283,7 @@ const SettingsPage = () => {
                       <select
                         id="cacheSize"
                         name="cacheSize"
-                        className="input"
+                        className="input w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
                         value={formData.cacheSize}
                         onChange={handleInputChange}
                       >
@@ -308,15 +317,119 @@ const SettingsPage = () => {
                     </div>
 
                     <div className="flex space-x-4 pt-4">
-                      <button type="submit" className="btn btn-primary">
+                      <button
+                        type="submit"
+                        className="btn btn-primary px-4 py-2 text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                      >
                         Save Storage Settings
                       </button>
                       <button
                         type="button"
-                        className="btn btn-outline text-red-600 dark:text-red-400 border-red-300 dark:border-red-700 hover:bg-red-50 dark:hover:bg-red-900"
+                        className="btn btn-outline px-4 py-2 text-sm font-medium rounded-md text-red-600 dark:text-red-400 border border-red-300 dark:border-red-700 hover:bg-red-50 dark:hover:bg-red-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                       >
                         Clear Cache
                       </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Database Tab */}
+            {activeTab === 'database' && (
+              <div className="space-y-6 animate-fade-in">
+                <div>
+                  <h2 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
+                    Database Settings
+                  </h2>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
+                    Manage your StoryMagic database settings and maintenance options.
+                  </p>
+
+                  <div className="p-4 bg-gray-50 dark:bg-gray-700 rounded-md mb-6">
+                    <h3 className="text-md font-medium text-gray-800 dark:text-white mb-3">
+                      Database Status
+                    </h3>
+                    <DatabaseStatus />
+                  </div>
+
+                  <div className="space-y-6">
+                    <div>
+                      <h3 className="text-md font-medium text-gray-800 dark:text-white mb-3">
+                        Database Location
+                      </h3>
+                      <div className="flex items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-md">
+                        <code className="text-sm text-gray-600 dark:text-gray-300 flex-1 overflow-x-auto">
+                          %APPDATA%\StoryMagic\storymagic.db
+                        </code>
+                        <button
+                          type="button"
+                          className="ml-3 text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300"
+                        >
+                          Open Location
+                        </button>
+                      </div>
+                    </div>
+
+                    <div>
+                      <h3 className="text-md font-medium text-gray-800 dark:text-white mb-3">
+                        Database Maintenance
+                      </h3>
+                      <div className="space-y-3">
+                        <button
+                          type="button"
+                          className="flex items-center p-3 w-full bg-gray-50 dark:bg-gray-700 rounded-md text-left hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
+                        >
+                          <div>
+                            <div className="text-sm font-medium text-gray-800 dark:text-white">
+                              Compact Database
+                            </div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400">
+                              Optimize database size and performance by removing unused space
+                            </div>
+                          </div>
+                        </button>
+
+                        <button
+                          type="button"
+                          className="flex items-center p-3 w-full bg-gray-50 dark:bg-gray-700 rounded-md text-left hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
+                        >
+                          <div>
+                            <div className="text-sm font-medium text-gray-800 dark:text-white">
+                              Backup Database
+                            </div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400">
+                              Create a backup copy of your database files
+                            </div>
+                          </div>
+                        </button>
+
+                        <button
+                          type="button"
+                          className="flex items-center p-3 w-full bg-gray-50 dark:bg-gray-700 rounded-md text-left hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors"
+                        >
+                          <div>
+                            <div className="text-sm font-medium text-gray-800 dark:text-white">
+                              Restore From Backup
+                            </div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400">
+                              Restore your database from a previously created backup
+                            </div>
+                          </div>
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="pt-4">
+                      <button
+                        type="button"
+                        className="btn btn-outline px-4 py-2 text-sm font-medium rounded-md text-red-600 dark:text-red-400 border border-red-300 dark:border-red-700 hover:bg-red-50 dark:hover:bg-red-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                      >
+                        Reset Database
+                      </button>
+                      <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                        Warning: This will delete all your stories and settings. This action cannot be undone.
+                      </p>
                     </div>
                   </div>
                 </div>

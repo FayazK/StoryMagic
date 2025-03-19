@@ -2,6 +2,12 @@ import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import {
+  initializeDatabase,
+  isInitialized,
+  closeDatabase,
+  insertDefaultTemplates
+} from './utils/database'
 
 function createWindow() {
   // Create the browser window.
@@ -35,6 +41,28 @@ function createWindow() {
   }
 }
 
+/**
+ * Initialize the database and IPC handlers for database operations
+ */
+function setupDatabase() {
+  // Initialize the database
+  const initialized = initializeDatabase()
+
+  // Setup IPC handlers
+  setupDatabaseIPC()
+
+  return initialized
+}
+
+/**
+ * Set up IPC handlers for database operations
+ */
+function setupDatabaseIPC() {
+  ipcMain.handle('db:isInitialized', () => {
+    return isInitialized()
+  })
+}
+
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
@@ -48,6 +76,9 @@ app.whenReady().then(() => {
   app.on('browser-window-created', (_, window) => {
     optimizer.watchWindowShortcuts(window)
   })
+
+  // Initialize the database
+  setupDatabase()
 
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
@@ -68,6 +99,11 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit()
   }
+})
+
+// Close database when app is about to quit
+app.on('will-quit', () => {
+  closeDatabase()
 })
 
 // In this file you can include the rest of your app's specific main process
