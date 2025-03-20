@@ -3,12 +3,10 @@ import './assets/main.css'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
-import { ThemeProvider } from './hooks/useTheme'
+// Theme provider removed as per requirements
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <ThemeProvider>
-      <App />
-    </ThemeProvider>
+    <App />
   </React.StrictMode>
 )

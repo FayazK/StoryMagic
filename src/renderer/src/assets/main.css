@@ -2,6 +2,7 @@
 
 @import "tailwindcss";
 @theme {
+  /* Enhanced color palette with vibrant, child-friendly colors */
   --color-primary-50: #f0f9ff;
   --color-primary-100: #e0f2fe;
   --color-primary-200: #bae6fd;
@@ -14,6 +15,7 @@
   --color-primary-900: #0c4a6e;
   --color-primary-950: #082f49;
 
+  /* Bright secondary color for accents */
   --color-secondary-50: #fdf4ff;
   --color-secondary-100: #fae8ff;
   --color-secondary-200: #f5d0fe;
@@ -25,58 +27,141 @@
   --color-secondary-800: #86198f;
   --color-secondary-900: #701a75;
   --color-secondary-950: #4a044e;
-
+  
+  /* Add tertiary color (amber/gold) for highlights */
+  --color-tertiary-50: #fffbeb;
+  --color-tertiary-100: #fef3c7;
+  --color-tertiary-200: #fde68a;
+  --color-tertiary-300: #fcd34d;
+  --color-tertiary-400: #fbbf24;
+  --color-tertiary-500: #f59e0b;
+  --color-tertiary-600: #d97706;
+  --color-tertiary-700: #b45309;
+  --color-tertiary-800: #92400e;
+  --color-tertiary-900: #78350f;
+  --color-tertiary-950: #451a03;
+  
+  /* Red for errors or important actions */
+  --color-red-50: #fef2f2;
+  --color-red-100: #fee2e2;
+  --color-red-500: #ef4444;
+  --color-red-600: #dc2626;
+  
+  /* Green for success states */
+  --color-green-50: #f0fdf4;
+  --color-green-100: #dcfce7;
+  --color-green-500: #22c55e;
+  --color-green-600: #16a34a;
 }
+
 @layer base {
   :root {
     color-scheme: light;
   }
   
-  .dark {
-    color-scheme: dark;
-  }
-  
   body {
-    @apply bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100;
+    @apply bg-gray-50 text-gray-900;
     @apply font-sans;
     @apply antialiased;
   }
+  
+  /* Custom scrollbar styles */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-primary-400) transparent;
+  }
+  
+  /* Webkit scrollbar styles */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background-color: var(--color-primary-400);
+    border-radius: 20px;
+  }
+  
+  /* Dark mode scrollbar styles removed */
+  
+  /* Transition for all theme changes */
+  * {
+    transition-property: background-color, border-color, color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 200ms;
+  }
 }
 
-/* Custom component styles using Tailwind CSS v4 @utility */
+/* Custom story card styles */
+@utility story-card {
+  position: relative;
+  overflow: hidden;
+  background-color: white;
+  border-radius: 1rem;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  }
+}
+
+/* Template card with playful hover effect */
+@utility template-card {
+  background-color: white;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  
+  &:hover {
+    transform: translateY(-5px) scale(1.02);
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    border-color: var(--color-primary-400);
+  }
+}
+
+/* Enhanced button styles */
 @utility btn {
   padding-inline: 1rem;
   padding-block: 0.5rem;
-  border-radius: 0.375rem;
+  border-radius: 0.75rem;
   font-weight: 500;
-  transition-property: color, background-color, border-color;
-  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  transition-duration: 150ms;
-}
-
-/* Correctly define modifier-based utilities */
-/* Base button with focus state */
-@utility btn-base {
-  &:focus {
-    outline: 2px solid transparent;
-    outline-offset: 2px;
-    --ring-offset-width: 2px;
-    --ring-width: 2px;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  
+  &:active {
+    transform: translateY(1px);
   }
 }
 
-/* Primary button */
+/* Primary button with glow effect */
 @utility btn-primary {
   background-color: var(--color-primary-600);
   color: white;
+  box-shadow: 0 0 10px rgba(14, 165, 233, 0.3);
   
   &:hover {
     background-color: var(--color-primary-700);
+    box-shadow: 0 0 15px rgba(14, 165, 233, 0.5);
   }
   
   &:focus {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
     --ring-color: var(--color-primary-500);
+    --ring-width: 2px;
   }
+  
+  /* Dark mode button styles removed */
 }
 
 /* Secondary button */
@@ -89,7 +174,10 @@
   }
   
   &:focus {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
     --ring-color: var(--color-secondary-500);
+    --ring-width: 2px;
   }
 }
 
@@ -105,7 +193,10 @@
   }
   
   &:focus {
+    outline: 2px solid transparent;
+    outline-offset: 2px;
     --ring-color: var(--color-primary-500);
+    --ring-width: 2px;
   }
   
   .dark & {
@@ -116,6 +207,23 @@
     &:hover {
       background-color: var(--color-gray-700);
     }
+  }
+}
+
+/* Stats card with gradient background */
+@utility stats-card {
+  border-radius: 1rem;
+  overflow: hidden;
+  position: relative;
+  
+  /* Light gradient */
+  background-image: linear-gradient(135deg, white 0%, var(--color-gray-100) 100%);
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  
+  /* Dark mode gradient */
+  .dark & {
+    background-image: linear-gradient(135deg, var(--color-gray-800) 0%, var(--color-gray-900) 100%);
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.3), 0 2px 4px -2px rgb(0 0 0 / 0.3);
   }
 }
 
@@ -136,22 +244,92 @@
     --ring-width: 2px;
     border-color: var(--color-primary-500);
   }
+}
+
+/* Animated background for the sidebar */
+@utility sidebar-bg {
+  position: relative;
+  background: rgb(255, 255, 255);
+  overflow: hidden;
   
-  .dark & {
-    border-color: var(--color-gray-600);
-    background-color: var(--color-gray-800);
-    color: var(--color-gray-200);
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 0;
+    opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%239C92AC' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+  }
+  
+  /* Ensure children are positioned above the background */
+  & > * {
+    position: relative;
+    z-index: 1;
   }
 }
 
-/* Card component */
-@utility card {
-  background-color: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+/* Main content area with subtle pattern */
+@utility content-bg {
+  position: relative;
+  background-color: var(--color-gray-50);
   overflow: hidden;
   
-  .dark & {
-    background-color: var(--color-gray-800);
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 0;
+    opacity: 0.02;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%239C92AC' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
   }
+  
+  /* Ensure children are positioned above the background */
+  & > * {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+/* Animation keyframes */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from { transform: translateY(10px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes pulse-gentle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+/* Animation utilities */
+@utility animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
+
+@utility animate-slide-up {
+  animation: slide-up 0.4s ease-out;
+}
+
+@utility animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@utility animate-pulse-gentle {
+  animation: pulse-gentle 3s ease-in-out infinite;
 }
